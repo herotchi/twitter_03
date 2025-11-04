@@ -32,6 +32,15 @@
                                     class="form-control"
                                 ></textarea>
                             </div>
+                            <!-- 文字数カウント表示 -->
+                            <p
+                                :class="[
+                                    'text-end',
+                                    isOverLimit ? 'text-danger' : 'text-muted',
+                                ]"
+                            >
+                                {{ newTweet.length }}/{{ MAX_LENGTH }}
+                            </p>
                             <div class="">
                                 <button
                                     type="submit"
@@ -40,6 +49,13 @@
                                 >
                                     シャウト
                                 </button>
+                            </div>
+                            <!-- エラーメッセージ -->
+                            <div
+                                v-if="errorMessage"
+                                class="alert alert-danger mt-2 mb-0"
+                            >
+                                {{ errorMessage }}
                             </div>
                         </form>
                     </div>
@@ -99,9 +115,15 @@ const STORAGE_KEY = "shout";
 // 1回で読み込む件数
 const LOAD_COUNT = 5;
 
+const MAX_LENGTH = 140;
+
 const allTweets = ref<Tweet[]>([]);
 const displayTweets = ref<Tweet[]>([]);
 const newTweet = ref("");
+// 文字数超過チェック
+const isOverLimit = computed(() => newTweet.value.length > MAX_LENGTH);
+const errorMessage = ref("");
+
 // ローディング状態
 const loading = ref(false);
 
@@ -134,7 +156,15 @@ const generateId = () =>
 
 // ツイート追加
 const addTweet = () => {
+    console.log(isOverLimit.value);
+    errorMessage.value = "";
+    // 未入力チェック
     if (!newTweet.value.trim()) return;
+    // 文字数チェック
+    if (isOverLimit.value) {
+        errorMessage.value = `シャウトは${MAX_LENGTH}文字以内で入力してください。`;
+        return;
+    }
 
     const newItem: Tweet = {
         id: generateId(),
