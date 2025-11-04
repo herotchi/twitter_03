@@ -75,7 +75,7 @@
                                 {{ tweet.createdAt }}
                             </p>
                             <button
-                                class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
+                                class="btn btn-sm btn-outline-danger position-absolute bottom-0 end-0 m-2"
                                 @click="deleteTweet(tweet.id)"
                             >
                                 削除
